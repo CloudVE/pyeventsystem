@@ -38,6 +38,7 @@ class BaseMiddleware(Middleware):
 
     def __init__(self):
         self.event_handlers = []
+        self.events = None
 
     def install(self, event_manager):
         self.events = event_manager
@@ -56,7 +57,7 @@ class BaseMiddleware(Middleware):
         discovered_handlers = []
         for key in dir(class_or_obj):
             try:
-                func = getattr(object, key)
+                func = getattr(class_or_obj, key)
             # Properties can sometimes cause various exceptions (e.g. during
             # auth failure testing)
             except Exception:
