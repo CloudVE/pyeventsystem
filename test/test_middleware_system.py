@@ -1,19 +1,18 @@
 import unittest
 
-from cloudbridge.cloud.base.events import SimpleEventDispatcher
-from cloudbridge.cloud.base.middleware import BaseMiddleware
-from cloudbridge.cloud.base.middleware import EventDebugLoggingMiddleware
-from cloudbridge.cloud.base.middleware import ExceptionWrappingMiddleware
-from cloudbridge.cloud.base.middleware import SimpleMiddlewareManager
-from cloudbridge.cloud.base.middleware import dispatch
-from cloudbridge.cloud.base.middleware import implement
-from cloudbridge.cloud.base.middleware import intercept
-from cloudbridge.cloud.base.middleware import observe
-from cloudbridge.cloud.interfaces.exceptions import CloudBridgeBaseException
-from cloudbridge.cloud.interfaces.exceptions import HandlerException
-from cloudbridge.cloud.interfaces.exceptions import \
-    InvalidConfigurationException
-from cloudbridge.cloud.interfaces.middleware import Middleware
+from pyeventware.base.events import SimpleEventDispatcher
+from pyeventware.base.middleware import BaseMiddleware
+from pyeventware.base.middleware import EventDebugLoggingMiddleware
+from pyeventware.base.middleware import ExceptionWrappingMiddleware
+from pyeventware.base.middleware import SimpleMiddlewareManager
+from pyeventware.base.middleware import dispatch
+from pyeventware.base.middleware import implement
+from pyeventware.base.middleware import intercept
+from pyeventware.base.middleware import observe
+from pyeventware.interfaces.exceptions import CloudBridgeBaseException
+from pyeventware.interfaces.exceptions import HandlerException
+from pyeventware.interfaces.exceptions import InvalidConfigurationException
+from pyeventware.interfaces.middleware import Middleware
 
 from .helpers import skipIfPython
 

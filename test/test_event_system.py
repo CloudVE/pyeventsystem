@@ -1,8 +1,8 @@
 import unittest
 
-from cloudbridge.cloud.base.events import SimpleEventDispatcher
-from cloudbridge.cloud.interfaces.events import EventHandler
-from cloudbridge.cloud.interfaces.exceptions import HandlerException
+from pyeventware.base.events import SimpleEventDispatcher
+from pyeventware.interfaces.events import EventHandler
+from pyeventware.interfaces.exceptions import HandlerException
 
 
 class EventSystemTestCase(unittest.TestCase):

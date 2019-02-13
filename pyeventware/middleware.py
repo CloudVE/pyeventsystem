@@ -9,10 +9,10 @@ from ..base.events import ImplementingEventHandler
 from ..base.events import InterceptingEventHandler
 from ..base.events import ObservingEventHandler
 from ..base.events import PlaceHoldingEventHandler
-from ..interfaces.exceptions import CloudBridgeBaseException
-from ..interfaces.exceptions import HandlerException
-from ..interfaces.middleware import Middleware
-from ..interfaces.middleware import MiddlewareManager
+from pyeventware.interfaces.exceptions import CloudBridgeBaseException
+from pyeventware.interfaces.exceptions import HandlerException
+from pyeventware.interfaces.middleware import Middleware
+from pyeventware.interfaces.middleware import MiddlewareManager
 
 log = logging.getLogger(__name__)
 
