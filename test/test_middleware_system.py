@@ -1,20 +1,14 @@
 import unittest
 
-from pyeventware.base.events import SimpleEventDispatcher
-from pyeventware.base.middleware import BaseMiddleware
-from pyeventware.base.middleware import EventDebugLoggingMiddleware
-from pyeventware.base.middleware import ExceptionWrappingMiddleware
-from pyeventware.base.middleware import SimpleMiddlewareManager
-from pyeventware.base.middleware import dispatch
-from pyeventware.base.middleware import implement
-from pyeventware.base.middleware import intercept
-from pyeventware.base.middleware import observe
-from pyeventware.interfaces.exceptions import CloudBridgeBaseException
-from pyeventware.interfaces.exceptions import HandlerException
-from pyeventware.interfaces.exceptions import InvalidConfigurationException
-from pyeventware.interfaces.middleware import Middleware
-
-from .helpers import skipIfPython
+from pyeventware.events import SimpleEventDispatcher
+from pyeventware.interfaces import HandlerException
+from pyeventware.interfaces import Middleware
+from pyeventware.middleware import BaseMiddleware
+from pyeventware.middleware import SimpleMiddlewareManager
+from pyeventware.middleware import dispatch
+from pyeventware.middleware import implement
+from pyeventware.middleware import intercept
+from pyeventware.middleware import observe
 
 
 class MiddlewareSystemTestCase(unittest.TestCase):
@@ -297,81 +291,3 @@ class MiddlewareSystemTestCase(unittest.TestCase):
         result = obj.my_callback_impl('first_pos_arg',
                                       a_keyword_arg='something')
         self.assertEqual(result, "hello")
-
-
-class ExceptionWrappingMiddlewareTestCase(unittest.TestCase):
-
-    def test_unknown_exception_is_wrapped(self):
-        EVENT_NAME = "an.exceptional.event"
-
-        class SomeDummyClass(object):
-
-            @implement(event_pattern=EVENT_NAME, priority=2500)
-            def raise_a_non_cloudbridge_exception(self, *args, **kwargs):
-                raise Exception("Some unhandled exception")
-
-        dispatcher = SimpleEventDispatcher()
-        manager = SimpleMiddlewareManager(dispatcher)
-        middleware = ExceptionWrappingMiddleware()
-        manager.add(middleware)
-
-        # no exception should be raised when there's no next handler
-        dispatcher.dispatch(self, EVENT_NAME)
-
-        some_obj = SomeDummyClass()
-        manager.add(some_obj)
-
-        with self.assertRaises(CloudBridgeBaseException):
-            dispatcher.dispatch(self, EVENT_NAME)
-
-    def test_cloudbridge_exception_is_passed_through(self):
-        EVENT_NAME = "an.exceptional.event"
-
-        class SomeDummyClass(object):
-
-            @implement(event_pattern=EVENT_NAME, priority=2500)
-            def raise_a_cloudbridge_exception(self, *args, **kwargs):
-                raise InvalidConfigurationException()
-
-        dispatcher = SimpleEventDispatcher()
-        manager = SimpleMiddlewareManager(dispatcher)
-        some_obj = SomeDummyClass()
-        manager.add(some_obj)
-        middleware = ExceptionWrappingMiddleware()
-        manager.add(middleware)
-
-        with self.assertRaises(InvalidConfigurationException):
-            dispatcher.dispatch(self, EVENT_NAME)
-
-
-class EventDebugLoggingMiddlewareTestCase(unittest.TestCase):
-
-    # Only python 3 has assertLogs support
-    @skipIfPython("<", 3, 0)
-    def test_messages_logged(self):
-        EVENT_NAME = "an.exceptional.event"
-
-        class SomeDummyClass(object):
-
-            @implement(event_pattern=EVENT_NAME, priority=2500)
-            def return_some_value(self, *args, **kwargs):
-                return "hello world"
-
-        dispatcher = SimpleEventDispatcher()
-        manager = SimpleMiddlewareManager(dispatcher)
-        middleware = EventDebugLoggingMiddleware()
-        manager.add(middleware)
-        some_obj = SomeDummyClass()
-        manager.add(some_obj)
-
-        with self.assertLogs('cloudbridge.cloud.base.middleware',
-                             level='DEBUG') as cm:
-            dispatcher.dispatch(self, EVENT_NAME,
-                                "named_param", keyword_param="hello")
-        self.assertTrue(
-            "named_param" in cm.output[0]
-            and "keyword_param" in cm.output[0] and "hello" in cm.output[0],
-            "Log output {0} not as expected".format(cm.output[0]))
-        self.assertTrue(
-            "hello world" in cm.output[1],
-            "Log output {0} does not contain result".format(cm.output[1]))

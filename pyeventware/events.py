@@ -3,9 +3,9 @@ import fnmatch
 import logging
 import re
 
-from pyeventware.interfaces.events import EventDispatcher
-from pyeventware.interfaces.events import EventHandler
-from pyeventware.interfaces.exceptions import HandlerException
+from .interfaces import EventDispatcher
+from .interfaces import EventHandler
+from .interfaces import HandlerException
 
 log = logging.getLogger(__name__)
 
