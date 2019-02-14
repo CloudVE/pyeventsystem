@@ -1,0 +1,23 @@
+language: python
+os:
+  - linux
+cache:
+  directories:
+  - "$HOME/.cache/pip"
+  - "$TRAVIS_BUILD_DIR/.tox"
+matrix:
+  fast_finish: true
+  include:
+    - python: 2.7
+      env: TOXENV=py27
+    - python: 3.6
+      env: TOXENV=py36
+    - python: pypy
+      env: TOXENV=pypy
+install:
+  - pip install tox
+  - pip install coveralls
+script:
+  - tox -e $TOXENV
+after_success:
+  - coveralls
