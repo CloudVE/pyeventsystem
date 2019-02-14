@@ -67,8 +67,7 @@ class BaseEventHandler(EventHandler):
         self.__dispatcher = value
 
     def unsubscribe(self):
-        if self.dispatcher:
-            self.dispatcher.unsubscribe(self)
+        self.dispatcher.unsubscribe(self)
 
 
 class InterceptingEventHandler(BaseEventHandler):
