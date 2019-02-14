@@ -46,7 +46,7 @@ class EventDispatcher(object):
             subscribed. The returned event handler can be used to unsubscribe
             from future events when required.
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def intercept(self, event_pattern, priority, callback):
@@ -90,7 +90,7 @@ class EventDispatcher(object):
             subscribed. The returned event handler can be used to unsubscribe
             from future events when required.
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def dispatch(self, sender, event, *args, **kwargs):
@@ -111,7 +111,7 @@ class EventDispatcher(object):
         All additional positional and keyword arguments are passed through
         to the callback functions for the event as is. Refer to the c
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def subscribe(self, event_handler):
@@ -124,7 +124,7 @@ class EventDispatcher(object):
         :type event_handler: :class:`.EventHandler`
         :param event_handler: An object of class EventHandler.
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def unsubscribe(self, event_handler):
@@ -135,7 +135,7 @@ class EventDispatcher(object):
         :type event_handler: :class:`.EventHandler`
         :param event_handler: An object of class EventHandler.
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_handlers_for_event(self, event):
@@ -146,7 +146,7 @@ class EventDispatcher(object):
         :type event: str
         :param event: The name of the event
         """
-        pass
+        pass  # pragma: no cover
 
 
 class EventHandler(object):
@@ -163,7 +163,7 @@ class EventHandler(object):
             provider.storage.*
             provider.storage.volumes.list
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractproperty
     def priority(self):
@@ -178,7 +178,7 @@ class EventHandler(object):
             provider.storage.*
             provider.storage.volumes.list
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractproperty
     def callback(self):
@@ -200,7 +200,7 @@ class EventHandler(object):
         The rest of the arguments to the callback can be any combination
         of positional or keyword arguments as desired.
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def invoke(self, event_args, *args, **kwargs):
@@ -218,21 +218,21 @@ class EventHandler(object):
            The event_args dict can also be used to convey additional info to
            downstream event handlers.
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def unsubscribe(self):
         """
         Unsubscribes from currently subscribed events.
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractproperty
     def dispatcher(self):
         """
         Get or sets the dispatcher currently associated with this event handler
         """
-        pass
+        pass  # pragma: no cover
 
 
 class Middleware(object):
@@ -260,14 +260,14 @@ class Middleware(object):
         :type provider: :class:`.Provider`
         :param provider: The provider that this middleware belongs to
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def uninstall(self, provider):
         """
         Use this method to unsubscribe all event handlers for this middleware.
         """
-        pass
+        pass  # pragma: no cover
 
 
 class MiddlewareManager(object):
@@ -285,18 +285,18 @@ class MiddlewareManager(object):
         :type middleware: :class:`.Middleware`
         :param middleware: The middleware implementation
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def remove(self, middleware):
         """
         Use this method to remove this middleware from the middleware manager.
         """
-        pass
+        pass  # pragma: no cover
 
 
 class HandlerException(Exception):
     """
     Marker interface for event handler exceptions.
     """
-    pass
+    pass  # pragma: no cover

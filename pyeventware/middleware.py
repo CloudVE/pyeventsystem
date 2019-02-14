@@ -132,7 +132,7 @@ class BaseMiddleware(Middleware):
                                                         None)):
                     try:
                         value = getattr(obj, key)
-                    except AttributeError:
+                    except AttributeError:  # pragma: no cover
                         continue
                     if not predicate or predicate(value):
                         results.append((key, value))

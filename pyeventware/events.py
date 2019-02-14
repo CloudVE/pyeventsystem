@@ -173,29 +173,24 @@ class SimpleEventDispatcher(EventDispatcher):
             raise HandlerException(message)
         return cache_list
 
-    def _invalidate_cache(self, event_pattern=None):
-        if not event_pattern:
-            # invalidate entire cache
-            self.__handler_cache = {}
-        else:
-            # Smarter invalidation by only deleting events that
-            # are affected by the pattern
-            for key in list(self.__handler_cache.keys()):
-                if re.search(fnmatch.translate(event_pattern), key):
-                    del self.__handler_cache[key]
+    def _invalidate_cache(self, event_pattern):
+        # Only invalidate events that are affected by the pattern
+        for key in list(self.__handler_cache.keys()):
+            if re.search(fnmatch.translate(event_pattern), key):
+                del self.__handler_cache[key]
 
     def subscribe(self, event_handler):
         event_handler.dispatcher = self
         handler_list = self.__events.get(event_handler.event_pattern, [])
         handler_list.append(event_handler)
         self.__events[event_handler.event_pattern] = handler_list
-        self._invalidate_cache(event_pattern=event_handler.event_pattern)
+        self._invalidate_cache(event_handler.event_pattern)
 
     def unsubscribe(self, event_handler):
         handler_list = self.__events.get(event_handler.event_pattern, [])
         handler_list.remove(event_handler)
         event_handler.dispatcher = None
-        self._invalidate_cache(event_pattern=event_handler.event_pattern)
+        self._invalidate_cache(event_handler.event_pattern)
 
     def observe(self, event_pattern, priority, callback):
         handler = ObservingEventHandler(event_pattern, priority, callback)
