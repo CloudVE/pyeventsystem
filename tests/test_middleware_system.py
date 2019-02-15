@@ -39,6 +39,19 @@ class MiddlewareSystemTestCase(unittest.TestCase):
         self.assertEqual(middleware.invocation_order, "install_uninstall",
                          "uninstall should be called when removing middleware")
 
+    def test_middleware_dispatcher(self):
+
+        dispatcher = SimpleEventDispatcher()
+        manager = SimpleMiddlewareManager(dispatcher)
+        assert manager.events == dispatcher
+
+        # If a dispatcher is not provided, a new one should be created
+        manager2 = SimpleMiddlewareManager()
+        assert manager2.events != dispatcher
+
+        # dispatching should work
+        manager2.events.dispatch(self, "dummyevent")
+
     def test_base_middleware(self):
         EVENT_NAME = "some.event.occurred"
 

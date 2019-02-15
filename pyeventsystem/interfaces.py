@@ -277,6 +277,16 @@ class MiddlewareManager(object):
 
     __metaclass__ = ABCMeta
 
+    @abstractproperty
+    def events(self):
+        """
+        Use this property to get the EventDispatcher associated with
+        this middleware manager.
+
+        :rtype: :class:`.EventDispatcher`
+        :return:  An object of class EventDispatcher.
+        """
+
     @abstractmethod
     def add(self, middleware):
         """

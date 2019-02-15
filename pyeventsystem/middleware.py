@@ -6,6 +6,7 @@ from .events import ImplementingEventHandler
 from .events import InterceptingEventHandler
 from .events import ObservingEventHandler
 from .events import PlaceHoldingEventHandler
+from .events import SimpleEventDispatcher
 from .interfaces import HandlerException
 from .interfaces import Middleware
 from .interfaces import MiddlewareManager
@@ -84,9 +85,13 @@ def dispatch(event, priority, dispatcher_attr='events'):
 
 class SimpleMiddlewareManager(MiddlewareManager):
 
-    def __init__(self, event_manager):
-        self.events = event_manager
+    def __init__(self, event_manager=None):
+        self.__events = event_manager or SimpleEventDispatcher()
         self.middleware_list = []
+
+    @property
+    def events(self):
+        return self.__events
 
     def add(self, middleware):
         if isinstance(middleware, Middleware):
