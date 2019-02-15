@@ -1,8 +1,8 @@
 import unittest
 
-from pyeventware.events import SimpleEventDispatcher
-from pyeventware.interfaces import EventHandler
-from pyeventware.interfaces import HandlerException
+from pyeventsystem.events import SimpleEventDispatcher
+from pyeventsystem.interfaces import EventHandler
+from pyeventsystem.interfaces import HandlerException
 
 
 class EventSystemTestCase(unittest.TestCase):

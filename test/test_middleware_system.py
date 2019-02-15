@@ -1,14 +1,14 @@
 import unittest
 
-from pyeventware.events import SimpleEventDispatcher
-from pyeventware.interfaces import HandlerException
-from pyeventware.interfaces import Middleware
-from pyeventware.middleware import BaseMiddleware
-from pyeventware.middleware import SimpleMiddlewareManager
-from pyeventware.middleware import dispatch
-from pyeventware.middleware import implement
-from pyeventware.middleware import intercept
-from pyeventware.middleware import observe
+from pyeventsystem.events import SimpleEventDispatcher
+from pyeventsystem.interfaces import HandlerException
+from pyeventsystem.interfaces import Middleware
+from pyeventsystem.middleware import BaseMiddleware
+from pyeventsystem.middleware import SimpleMiddlewareManager
+from pyeventsystem.middleware import dispatch
+from pyeventsystem.middleware import implement
+from pyeventsystem.middleware import intercept
+from pyeventsystem.middleware import observe
 
 
 class MiddlewareSystemTestCase(unittest.TestCase):

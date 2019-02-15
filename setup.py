@@ -4,10 +4,10 @@ import re
 
 import setuptools
 
-# Cannot use "from pyeventware import get_version" because that would
+# Cannot use "from pyeventsystem import get_version" because that would
 # try to import the six package which may not be installed yet.
 reg = re.compile(r"__version__\s*=\s*(.+)")
-with open(os.path.join("pyeventware", "__init__.py")) as f:
+with open(os.path.join("pyeventsystem", "__init__.py")) as f:
     for line in f:
         m = reg.match(line)
         if m:
@@ -18,7 +18,7 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="pyeventware",
+    name="pyeventsystem",
     description="An event driven middleware library for Python",
     version=version,
     author="Galaxy and GVL projects",
@@ -26,7 +26,7 @@ setuptools.setup(
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/cloudve/pyeventware",
+    url="https://github.com/cloudve/pyeventsystem",
     extras_require={
         'dev': ['tox', 'sphinx', 'flake8', 'flake8-import-order']
     },
