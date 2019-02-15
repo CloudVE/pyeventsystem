@@ -451,6 +451,8 @@ class EventSystemTestCase(unittest.TestCase):
             [handler.callback for handler in
              dispatcher.get_handlers_for_event(EVENT_NAME)])
         hndlr1.unsubscribe()
+        # unsubscribing twice should succeed
+        hndlr1.unsubscribe()
 
         # Only my_callback2 should be registered after unsubscribe
         self.assertListEqual(

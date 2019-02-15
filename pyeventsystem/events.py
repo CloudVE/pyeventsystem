@@ -10,14 +10,6 @@ from .interfaces import HandlerException
 log = logging.getLogger(__name__)
 
 
-class PlaceHoldingEventHandler(object):
-    def __init__(self, event_pattern, priority, callback, handler_class):
-        self.event_pattern = event_pattern
-        self.priority = priority
-        self.callback = callback
-        self.handler_class = handler_class
-
-
 class BaseEventHandler(EventHandler):
 
     def __init__(self, event_pattern, priority, callback):
@@ -67,7 +59,9 @@ class BaseEventHandler(EventHandler):
         self.__dispatcher = value
 
     def unsubscribe(self):
-        self.dispatcher.unsubscribe(self)
+        if self.dispatcher:
+            self.dispatcher.unsubscribe(self)
+        self.dispatcher = None
 
 
 class InterceptingEventHandler(BaseEventHandler):
@@ -122,6 +116,15 @@ class ImplementingEventHandler(BaseEventHandler):
             event_args.pop('result', None)
             event_args.pop('next_handler', None)
         return result
+
+
+class PlaceHoldingEventHandler(object):
+
+    def __init__(self, event_pattern, priority, callback, handler_class):
+        self.event_pattern = event_pattern
+        self.priority = priority
+        self.callback = callback
+        self.handler_class = handler_class
 
 
 class SimpleEventDispatcher(EventDispatcher):

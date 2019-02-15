@@ -47,7 +47,15 @@ def implement(event_pattern, priority):
     return deco
 
 
-def dispatch(event, priority):
+def _deepgetattr(obj, name, default=None):
+    """Recurses through an attribute chain to get the ultimate value."""
+    try:
+        return functools.reduce(getattr, name.split('.'), obj)
+    except AttributeError:
+        return default
+
+
+def dispatch(event, priority, dispatcher_attr='events'):
     """
     The event decorator combines the functionality of the implement decorator
     and a manual event dispatch into a single decorator.
@@ -55,7 +63,7 @@ def dispatch(event, priority):
     def deco(f):
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):
-            events = getattr(self, 'events', None)
+            events = _deepgetattr(self, dispatcher_attr, default=None)
             if events:
                 # Don't call the wrapped method, just dispatch the event,
                 # and the event handler will get invoked
@@ -63,7 +71,8 @@ def dispatch(event, priority):
             else:
                 raise HandlerException(
                     "Cannot dispatch event: {0}. The object {1} should have"
-                    " an events property".format(event, self))
+                    " a property named {2}".format(
+                        event, self, dispatcher_attr or 'events'))
         # Mark function as having an event_handler so we can discover it
         # The callback f is unbound and will be bound during middleware
         # auto discovery
