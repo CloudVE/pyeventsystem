@@ -64,16 +64,26 @@ def dispatch(event, priority, dispatcher_attr='events'):
     def deco(f):
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):
-            events = _deepgetattr(self, dispatcher_attr, default=None)
-            if events:
-                # Don't call the wrapped method, just dispatch the event,
-                # and the event handler will get invoked
-                return events.dispatch(self, event, *args, **kwargs)
+            if wrapper.__event_handler._is_bound:
+                # If the handler is properly bound, then we can just
+                # dispatch the event, and the event handler will get
+                # invoked
+                dispatcher = _deepgetattr(self, dispatcher_attr, default=None)
+                if dispatcher:
+                    return dispatcher.dispatch(self, event, *args, **kwargs)
+                else:
+                    raise HandlerException(
+                        "Cannot dispatch event: {0}. The object {1} should "
+                        "have a property named {2}, so that the "
+                        "EventDispatcher can be accessed.".format(
+                            event, self, dispatcher_attr or 'events'))
             else:
-                raise HandlerException(
-                    "Cannot dispatch event: {0}. The object {1} should have"
-                    " a property named {2}".format(
-                        event, self, dispatcher_attr or 'events'))
+                # if not bound, just invoke the method directly. This means
+                # that either this function was overridden by a subclass,
+                # or it was never registered with a middleware manager, in
+                # which case the behaviour is to pass-through to the
+                # original function.
+                return f(self, *args, **kwargs)
         # Mark function as having an event_handler so we can discover it
         # The callback f is unbound and will be bound during middleware
         # auto discovery
@@ -167,6 +177,8 @@ class BaseMiddleware(Middleware):
                 # and set the bound method as the callback
                 new_handler.callback = (new_handler.callback
                                                    .__get__(class_or_obj))
+                # Mark old handler as bound
+                handler._is_bound = True
                 discovered_handlers.append(new_handler)
         return discovered_handlers
 

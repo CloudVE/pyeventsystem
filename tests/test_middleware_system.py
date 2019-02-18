@@ -304,3 +304,86 @@ class MiddlewareSystemTestCase(unittest.TestCase):
         result = obj.my_callback_impl('first_pos_arg',
                                       a_keyword_arg='something')
         self.assertEqual(result, "hello")
+
+    def test_middleware_inheritance_override(self):
+        EVENT_NAME = "some.event.occurred"
+        invocation_order = [""]
+
+        manager = SimpleMiddlewareManager()
+
+        class ParentMiddlewareClass(object):
+
+            @property
+            def events(self):
+                return manager.events
+
+            @dispatch(event=EVENT_NAME, priority=2500)
+            def my_callback_impl(self, *args, **kwargs):
+                invocation_order[0] += "base_"
+
+        class ChildMiddlewareClass(ParentMiddlewareClass):
+
+            @dispatch(event=EVENT_NAME, priority=2500)
+            def my_callback_impl(self, *args, **kwargs):
+                invocation_order[0] += "child"
+
+        obj = ChildMiddlewareClass()
+        manager.add(obj)
+
+        obj.my_callback_impl()
+        self.assertEqual(invocation_order[0], "child")
+
+    def test_middleware_inheritance_super(self):
+        EVENT_NAME = "some.event.occurred"
+        invocation_order = [""]
+
+        manager = SimpleMiddlewareManager()
+
+        class ParentMiddlewareClass(object):
+
+            @property
+            def events(self):
+                return manager.events
+
+            @dispatch(event=EVENT_NAME, priority=2500)
+            def my_callback_impl(self, *args, **kwargs):
+                invocation_order[0] += "base_"
+
+        class ChildMiddlewareClass(ParentMiddlewareClass):
+
+            @dispatch(event=EVENT_NAME, priority=2500)
+            def my_callback_impl(self, *args, **kwargs):
+                super(ChildMiddlewareClass, self).my_callback_impl(
+                    *args, **kwargs)
+                invocation_order[0] += "child"
+
+        obj = ChildMiddlewareClass()
+        manager.add(obj)
+
+        obj.my_callback_impl()
+        self.assertEqual(invocation_order[0], "base_child")
+
+    def test_unregistered_dispatch(self):
+        # Test case for when the class has not been registered with middleware
+        # at all. In this case, dispatch will directly invoke the method,
+        # bypassing the event system.
+        EVENT_NAME = "some.event.occurred"
+        invocation_order = [""]
+
+        class ParentMiddlewareClass(object):
+
+            @dispatch(event=EVENT_NAME, priority=2500)
+            def my_callback_impl(self, *args, **kwargs):
+                invocation_order[0] += "base_"
+
+        class ChildMiddlewareClass(ParentMiddlewareClass):
+
+            @dispatch(event=EVENT_NAME, priority=2500)
+            def my_callback_impl(self, *args, **kwargs):
+                super(ChildMiddlewareClass, self).my_callback_impl(
+                    *args, **kwargs)
+                invocation_order[0] += "child"
+
+        obj = ChildMiddlewareClass()
+        obj.my_callback_impl()
+        self.assertEqual(invocation_order[0], "base_child")

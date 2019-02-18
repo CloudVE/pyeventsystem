@@ -125,6 +125,7 @@ class PlaceHoldingEventHandler(object):
         self.priority = priority
         self.callback = callback
         self.handler_class = handler_class
+        self._is_bound = False
 
 
 class SimpleEventDispatcher(EventDispatcher):
