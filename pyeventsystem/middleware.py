@@ -64,15 +64,24 @@ def dispatch(event, priority, dispatcher_attr='events'):
     def deco(f):
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):
-            events = _deepgetattr(self, dispatcher_attr, default=None)
-            if events:
-                # Don't call the wrapped method, just dispatch the event,
-                # and the event handler will get invoked
-                return events.dispatch(self, event, *args, **kwargs)
+            dispatcher = _deepgetattr(self, dispatcher_attr, default=None)
+            if dispatcher:
+                bound_func = f.__get__(self)
+                if any(h for h in dispatcher.get_handlers_for_event(event)
+                       if h.callback == bound_func):
+                    # This function is in the dispatcher list for this event,
+                    # so dispatch it
+                    return dispatcher.dispatch(self, event, *args, **kwargs)
+                else:
+                    # This function is either not registered with the
+                    # dispatcher or has been overridden, so invoke the original
+                    # function directly
+                    return f(self, *args, **kwargs)
             else:
                 raise HandlerException(
-                    "Cannot dispatch event: {0}. The object {1} should have"
-                    " a property named {2}".format(
+                    "Cannot dispatch event: {0}. The object {1} should "
+                    "have a property named {2}, so that the "
+                    "EventDispatcher can be accessed.".format(
                         event, self, dispatcher_attr or 'events'))
         # Mark function as having an event_handler so we can discover it
         # The callback f is unbound and will be bound during middleware
@@ -167,6 +176,8 @@ class BaseMiddleware(Middleware):
                 # and set the bound method as the callback
                 new_handler.callback = (new_handler.callback
                                                    .__get__(class_or_obj))
+                # Mark old handler as bound
+                handler._is_bound = True
                 discovered_handlers.append(new_handler)
         return discovered_handlers
 
