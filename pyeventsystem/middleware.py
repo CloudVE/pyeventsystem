@@ -64,26 +64,22 @@ def dispatch(event, priority, dispatcher_attr='events'):
     def deco(f):
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):
-            if wrapper.__event_handler._is_bound:
-                # If the handler is properly bound, then we can just
-                # dispatch the event, and the event handler will get
-                # invoked
-                dispatcher = _deepgetattr(self, dispatcher_attr, default=None)
-                if dispatcher:
+            dispatcher = _deepgetattr(self, dispatcher_attr, default=None)
+            if dispatcher:
+                bound_func = f.__get__(self)
+                if any(h for h in dispatcher.get_handlers_for_event(event)
+                       if h.callback == bound_func):
+                    # This function is in the dispatcher list for this event,
+                    # so dispatch it
                     return dispatcher.dispatch(self, event, *args, **kwargs)
                 else:
-                    raise HandlerException(
-                        "Cannot dispatch event: {0}. The object {1} should "
-                        "have a property named {2}, so that the "
-                        "EventDispatcher can be accessed.".format(
-                            event, self, dispatcher_attr or 'events'))
+                    return f(self, *args, **kwargs)
             else:
-                # if not bound, just invoke the method directly. This means
-                # that either this function was overridden by a subclass,
-                # or it was never registered with a middleware manager, in
-                # which case the behaviour is to pass-through to the
-                # original function.
-                return f(self, *args, **kwargs)
+                raise HandlerException(
+                    "Cannot dispatch event: {0}. The object {1} should "
+                    "have a property named {2}, so that the "
+                    "EventDispatcher can be accessed.".format(
+                        event, self, dispatcher_attr or 'events'))
         # Mark function as having an event_handler so we can discover it
         # The callback f is unbound and will be bound during middleware
         # auto discovery
