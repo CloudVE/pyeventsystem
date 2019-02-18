@@ -73,6 +73,9 @@ def dispatch(event, priority, dispatcher_attr='events'):
                     # so dispatch it
                     return dispatcher.dispatch(self, event, *args, **kwargs)
                 else:
+                    # This function is either not registered with the
+                    # dispatcher or has been overridden, so invoke the original
+                    # function directly
                     return f(self, *args, **kwargs)
             else:
                 raise HandlerException(
