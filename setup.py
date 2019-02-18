@@ -28,7 +28,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/cloudve/pyeventsystem",
     extras_require={
-        'dev': ['tox', 'sphinx', 'flake8', 'flake8-import-order']
+        'dev': ['tox', 'pydevd', 'sphinx', 'flake8', 'flake8-import-order']
     },
     packages=setuptools.find_packages(),
     classifiers=[
